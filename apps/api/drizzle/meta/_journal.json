@@ -15,6 +15,13 @@
       "when": 1791150885535,
       "tag": "0001_costs_files_purchases",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795134035584,
+      "tag": "0002_work_logs",
+      "breakpoints": true
     }
   ]
 }

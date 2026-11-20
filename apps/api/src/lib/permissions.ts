@@ -58,6 +58,10 @@ export interface ComponentOwnership {
 export const canEditComponent = (a: ProjectAccess, userId: string, c: ComponentOwnership) =>
   canManageSystem(a, c.systemId) || c.responsibleId === userId || c.collaboratorIds.includes(userId);
 
+/** Anyone in the project logs their own work; only the author or a project lead can change an entry. */
+export const canLogWork = (a: ProjectAccess) => canViewProject(a);
+export const canEditWorkLog = (a: ProjectAccess, userId: string, log: { userId: string | null }) => canManageProject(a) || log.userId === userId;
+
 /** Loads access and asserts the user can at least view the project. */
 export async function requireProjectAccess(user: AuthUser, projectId: string, tx: DbOrTx = db): Promise<ProjectAccess> {
   const [project] = await tx.select({ id: schema.projects.id }).from(schema.projects).where(eq(schema.projects.id, projectId)).limit(1);

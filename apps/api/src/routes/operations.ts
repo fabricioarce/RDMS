@@ -1,5 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
-import { fileMetaSchema, inspectionSchema, purchaseSchema, testSchema, updatePurchaseSchema, updateTestSchema } from '@rdms/shared';
+import { fileMetaSchema, inspectionSchema, purchaseSchema, testSchema, updatePurchaseSchema, updateTestSchema, updateWorkLogSchema, workLogSchema } from '@rdms/shared';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { env } from '../env.js';
@@ -10,6 +10,7 @@ import { deleteInspection, loadInspections, recordInspection } from '../services
 import { computeMetrics } from '../services/metrics.js';
 import { createPurchase, deletePurchase, getPurchaseOrThrow, loadPurchases, updatePurchase } from '../services/purchases.js';
 import { createTest, deleteTest, getTestOrThrow, loadTests, updateTest } from '../services/tests.js';
+import { createWorkLog, deleteWorkLog, getWorkLogOrThrow, loadWorkLogs, updateWorkLog } from '../services/work-logs.js';
 
 /** Phase 2/3 modules. Mounted under /api/projects/:projectId (project access already loaded). */
 export const operationRoutes = new Hono<ProjectEnv>()
@@ -44,6 +45,23 @@ export const operationRoutes = new Hono<ProjectEnv>()
   .delete('/tests/:testId', async (c) => {
     const current = await getTestOrThrow(c.var.projectId, uuidParam(c.req.param('testId'), 'Prueba'));
     await deleteTest(c.var.user, c.var.access, current);
+    return c.json({ ok: true });
+  })
+
+  // ------------------------------------------------------------ work logs
+  .get('/work-logs', async (c) => c.json({ workLogs: await loadWorkLogs(c.var.projectId) }))
+  .post('/work-logs', zValidator('json', workLogSchema), async (c) => {
+    const workLog = await createWorkLog(c.var.user, c.var.access, c.var.projectId, c.req.valid('json'));
+    return c.json({ workLog }, 201);
+  })
+  .patch('/work-logs/:workLogId', zValidator('json', updateWorkLogSchema), async (c) => {
+    const current = await getWorkLogOrThrow(c.var.projectId, uuidParam(c.req.param('workLogId'), 'Registro'));
+    const workLog = await updateWorkLog(c.var.user, c.var.access, current, c.req.valid('json'));
+    return c.json({ workLog });
+  })
+  .delete('/work-logs/:workLogId', async (c) => {
+    const current = await getWorkLogOrThrow(c.var.projectId, uuidParam(c.req.param('workLogId'), 'Registro'));
+    await deleteWorkLog(c.var.user, c.var.access, current);
     return c.json({ ok: true });
   })
 

@@ -20,6 +20,7 @@ import { SystemDetailPage } from '@/pages/system-detail';
 import { SystemsPage } from '@/pages/systems';
 import { TestsPage } from '@/pages/tests';
 import { UsersPage } from '@/pages/users';
+import { WorkLogPage } from '@/pages/worklog';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
@@ -163,6 +164,7 @@ const router = createBrowserRouter([
           { path: 'purchases', element: <PurchasesPage /> },
           { path: 'budget', element: <BudgetPage /> },
           { path: 'tests', element: <TestsPage /> },
+          { path: 'worklog', element: <WorkLogPage /> },
           { path: 'reports', element: <ReportsPage /> },
           { path: 'metrics', element: <MetricsPage /> },
           { path: 'activity', element: <ActivityPage /> },

@@ -209,6 +209,21 @@ export interface Test {
   updatedAt: string;
 }
 
+export interface WorkLog {
+  id: string;
+  projectId: string;
+  userId: string | null;
+  componentId: string | null;
+  /** document or task worked on, when it is not (only) a component */
+  subject: string | null;
+  date: string;
+  minutes: number;
+  progress: string | null;
+  pending: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface FileItem {
   id: string;
   projectId: string;

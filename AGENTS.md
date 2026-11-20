@@ -12,4 +12,6 @@
 - Categorías de costo estimado: material, manufactura, envío, adicionales (`COST_CATEGORIES` en shared). Reglas de gastado/comprometido en `computeCosts`.
 - Archivos: `services/files.ts` (StorageAdapter, disco local en `UPLOAD_DIR`). Subida multipart `POST /api/projects/:id/files` (campos `file`, `entityType`, `entityId`, `category`); descarga `GET .../files/:fileId/download`.
 - Módulos de fase 2/3 (compras, pruebas, inspecciones, archivos, métricas) viven en `routes/operations.ts` + `services/*`; en la web, páginas `manufacturing`, `purchases`, `budget`, `tests`, `reports`, `metrics`.
+- Bitácora de trabajo: tabla `work_logs`, `services/work-logs.ts`, rutas `/api/projects/:id/work-logs`, página `worklog`. No va en el bundle del proyecto (query propia `useWorkLogs`). Cada quien edita lo suyo; líder de proyecto/admin edita todo (`canEditWorkLog`).
+- Migraciones nuevas: `pnpm exec drizzle-kit generate --name <nombre>` dentro de `apps/api`; se aplican solas al arrancar el API.
 - Para evitar grafos HMR rotos: no exportes componentes desde páginas para usarlos en otras páginas; ponlos en `components/domain/`.

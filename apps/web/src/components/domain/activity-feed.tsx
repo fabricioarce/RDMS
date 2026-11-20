@@ -11,6 +11,7 @@ import {
   PURCHASE_STATUSES,
   STATUS_BY_KEY,
   TEST_STATUSES,
+  formatDuration,
   type ActivityChange,
   type ActivityLog,
   type ComponentStatus,
@@ -36,6 +37,7 @@ function renderValue(field: string, value: unknown, label: string | null | undef
   if (field === 'process') return MANUFACTURING_PROCESSES.find((m) => m.key === value)?.label ?? String(value);
   if (MONEY_FIELDS.has(field) && typeof value === 'number') return formatMoney(value, currency);
   if (DATE_FIELDS.has(field) && typeof value === 'string') return formatDate(value);
+  if (field === 'minutes' && typeof value === 'number') return formatDuration(value);
   if (MINUTE_FIELDS.has(field)) return `${value} min`;
   if (typeof value === 'boolean') return value ? 'sí' : 'no';
   const s = String(value);
@@ -44,7 +46,7 @@ function renderValue(field: string, value: unknown, label: string | null | undef
 
 const fieldLabel = (field: string) => COMPONENT_FIELD_LABELS[field] ?? field;
 
-const ENTITY_NOUN: Record<ActivityLog['entityType'], string> = { project: 'el proyecto', system: 'el sistema', component: '', milestone: 'el hito', purchase: 'la compra', inspection: 'la inspección', test: 'la prueba' };
+const ENTITY_NOUN: Record<ActivityLog['entityType'], string> = { project: 'el proyecto', system: 'el sistema', component: '', milestone: 'el hito', purchase: 'la compra', inspection: 'la inspección', test: 'la prueba', work_log: 'el registro de bitácora' };
 
 function describe(log: ActivityLog, currency: string): React.ReactNode {
   const changes = log.changes ?? [];
@@ -174,7 +176,9 @@ export function ActivityFeed({ logs, compact, showEntityLinks = true, className 
                 ? `/p/${project.project.id}/purchases`
                 : log.entityType === 'test'
                   ? `/p/${project.project.id}/tests?test=${log.entityId}`
-                  : null
+                  : log.entityType === 'work_log'
+                    ? `/p/${project.project.id}/worklog`
+                    : null
             : null;
         const content = (
           <span className="text-[13px] leading-snug">

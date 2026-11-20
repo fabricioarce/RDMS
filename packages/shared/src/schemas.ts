@@ -196,6 +196,18 @@ export const testSchema = z.object({
 });
 export const updateTestSchema = testSchema.partial();
 
+// ------------------------------------------------------------------ work logs
+
+export const workLogSchema = z.object({
+  date: isoDate,
+  minutes: z.number().int().min(1, 'Indica cuánto tiempo trabajaste').max(24 * 60, 'Máximo 24 horas por registro'),
+  componentId: uuid.nullable().optional(),
+  subject: nullableText(200).optional(),
+  progress: nullableText().optional(),
+  pending: nullableText().optional(),
+});
+export const updateWorkLogSchema = workLogSchema.partial();
+
 // ---------------------------------------------------------------------- files
 
 export const fileMetaSchema = z.object({
@@ -235,3 +247,5 @@ export type InspectionInput = z.infer<typeof inspectionSchema>;
 export type TestInput = z.infer<typeof testSchema>;
 export type UpdateTestInput = z.infer<typeof updateTestSchema>;
 export type FileMetaInput = z.infer<typeof fileMetaSchema>;
+export type WorkLogInput = z.infer<typeof workLogSchema>;
+export type UpdateWorkLogInput = z.infer<typeof updateWorkLogSchema>;

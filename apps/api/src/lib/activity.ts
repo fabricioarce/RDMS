@@ -52,19 +52,26 @@ export function diffRecords<T extends Record<string, unknown>>(before: T, after:
 
 const USER_FIELDS = new Set(['responsibleId', 'designerId', 'userId']);
 const SYSTEM_FIELDS = new Set(['systemId']);
+const COMPONENT_FIELDS = new Set(['componentId']);
 
-/** Replaces user/system ids in changes with readable labels so history survives renames/deletions. */
+/** Replaces user/system/component ids in changes with readable labels so history survives renames/deletions. */
 export async function labelChanges(changes: ActivityChange[], tx: DbOrTx = db): Promise<ActivityChange[]> {
   const userIds = new Set<string>();
   const systemIds = new Set<string>();
+  const componentIds = new Set<string>();
   for (const ch of changes) {
-    const bucket = USER_FIELDS.has(ch.field) ? userIds : SYSTEM_FIELDS.has(ch.field) ? systemIds : null;
+    const bucket = USER_FIELDS.has(ch.field) ? userIds : SYSTEM_FIELDS.has(ch.field) ? systemIds : COMPONENT_FIELDS.has(ch.field) ? componentIds : null;
     if (!bucket) continue;
     if (typeof ch.from === 'string') bucket.add(ch.from);
     if (typeof ch.to === 'string') bucket.add(ch.to);
   }
   const userNames = new Map<string, string>();
   const systemNames = new Map<string, string>();
+  const componentNames = new Map<string, string>();
+  if (componentIds.size) {
+    const rows = await tx.select({ id: schema.components.id, code: schema.components.code, name: schema.components.name }).from(schema.components).where(inArray(schema.components.id, [...componentIds]));
+    rows.forEach((r) => componentNames.set(r.id, `${r.code} ${r.name}`));
+  }
   if (userIds.size) {
     const rows = await tx.select({ id: schema.users.id, name: schema.users.name }).from(schema.users).where(inArray(schema.users.id, [...userIds]));
     rows.forEach((r) => userNames.set(r.id, r.name));
@@ -74,7 +81,7 @@ export async function labelChanges(changes: ActivityChange[], tx: DbOrTx = db): 
     rows.forEach((r) => systemNames.set(r.id, r.name));
   }
   return changes.map((ch) => {
-    const map = USER_FIELDS.has(ch.field) ? userNames : SYSTEM_FIELDS.has(ch.field) ? systemNames : null;
+    const map = USER_FIELDS.has(ch.field) ? userNames : SYSTEM_FIELDS.has(ch.field) ? systemNames : COMPONENT_FIELDS.has(ch.field) ? componentNames : null;
     if (!map) return ch;
     return {
       ...ch,

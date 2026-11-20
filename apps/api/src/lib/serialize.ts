@@ -15,6 +15,7 @@ import type {
   Test,
   User,
   UserSummary,
+  WorkLog,
 } from '@rdms/shared';
 import type { schema } from '../db/index.js';
 
@@ -192,6 +193,22 @@ export function serializeTest(t: TestRow): Test {
     observations: t.observations,
     createdAt: t.createdAt.toISOString(),
     updatedAt: t.updatedAt.toISOString(),
+  };
+}
+
+export function serializeWorkLog(w: typeof schema.workLogs.$inferSelect): WorkLog {
+  return {
+    id: w.id,
+    projectId: w.projectId,
+    userId: w.userId,
+    componentId: w.componentId,
+    subject: w.subject,
+    date: w.date,
+    minutes: w.minutes,
+    progress: w.progress,
+    pending: w.pending,
+    createdAt: w.createdAt.toISOString(),
+    updatedAt: w.updatedAt.toISOString(),
   };
 }
 

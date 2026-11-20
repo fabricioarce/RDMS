@@ -6,7 +6,7 @@ import { Avatar } from '@/components/ui/misc';
 import { useProjectOptional } from '@/hooks/use-project';
 import { useLogout, useMe, useProjects } from '@/lib/queries';
 import { cn } from '@/lib/utils';
-import { Activity, BarChart3, Box, Calendar, Check, ChevronsUpDown, FileText, FlaskConical, FolderKanban, Factory, KeyRound, Layers, LayoutDashboard, LogOut, Menu, PiggyBank, Rocket, Search, Settings, ShoppingCart, Users } from 'lucide-react';
+import { Activity, BarChart3, Box, Calendar, Check, ChevronsUpDown, FileText, FlaskConical, FolderKanban, Factory, KeyRound, Layers, LayoutDashboard, LogOut, Menu, NotebookPen, PiggyBank, Rocket, Search, Settings, ShoppingCart, Users } from 'lucide-react';
 import * as React from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { ChangePasswordDialog } from './change-password-dialog';
@@ -168,6 +168,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { to: `/p/${pid}/manufacturing`, label: 'Manufactura', icon: Factory },
         { to: `/p/${pid}/purchases`, label: 'Compras', icon: ShoppingCart },
         { to: `/p/${pid}/tests`, label: 'Pruebas', icon: FlaskConical },
+        { to: `/p/${pid}/worklog`, label: 'Bitácora', icon: NotebookPen },
         { to: `/p/${pid}/budget`, label: 'Presupuesto', icon: PiggyBank },
       ]
     : [];

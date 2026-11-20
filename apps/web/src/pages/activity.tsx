@@ -42,6 +42,7 @@ export function ActivityPage() {
               <option value="system">Sistemas</option>
               <option value="project">Proyecto</option>
               <option value="milestone">Hitos</option>
+              <option value="work_log">Bitácora</option>
             </NativeSelect>
           </>
         }

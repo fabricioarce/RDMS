@@ -336,6 +336,30 @@ export const tests = pgTable(
   (t) => [index('tests_project_idx').on(t.projectId)],
 );
 
+export const workLogs = pgTable(
+  'work_logs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+    componentId: uuid('component_id').references(() => components.id, { onDelete: 'set null' }),
+    subject: text('subject'),
+    date: date('date', { mode: 'string' }).notNull(),
+    minutes: integer('minutes').notNull(),
+    progress: text('progress'),
+    pending: text('pending'),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index('work_logs_project_date_idx').on(t.projectId, t.date),
+    index('work_logs_user_idx').on(t.userId),
+    check('work_logs_minutes_positive', sql`${t.minutes} > 0`),
+  ],
+);
+
 export const files = pgTable(
   'files',
   {

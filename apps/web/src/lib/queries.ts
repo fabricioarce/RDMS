@@ -34,7 +34,10 @@ import type {
   UpdateSystemInput,
   UpdateTestInput,
   UpdateUserInput,
+  UpdateWorkLogInput,
   User,
+  WorkLog,
+  WorkLogInput,
 } from '@rdms/shared';
 import { useMutation, useQuery, useQueryClient, type UseMutationOptions } from '@tanstack/react-query';
 
@@ -47,6 +50,7 @@ export const keys = {
   componentActivity: (projectId: string, componentId: string) => ['component-activity', projectId, componentId] as const,
   search: (q: string, projectId?: string) => ['search', q, projectId ?? ''] as const,
   metrics: (projectId: string) => ['metrics', projectId] as const,
+  workLogs: (projectId: string) => ['work-logs', projectId] as const,
 };
 
 export type ProjectListItem = Project & { progress: ProgressSummary; memberCount: number };
@@ -411,6 +415,26 @@ export function useTestMutation(projectId: string) {
       return (await api.post<{ test: Test }>(`/projects/${projectId}/tests`, vars.input)).test;
     },
     onSuccess: () => inv.bundle(projectId),
+  });
+}
+
+export function useWorkLogs(projectId: string) {
+  return useQuery({
+    queryKey: keys.workLogs(projectId),
+    queryFn: async () => (await api.get<{ workLogs: WorkLog[] }>(`/projects/${projectId}/work-logs`)).workLogs,
+    staleTime: 15 * 1000,
+  });
+}
+
+export function useWorkLogMutation(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { id?: string; input?: WorkLogInput | UpdateWorkLogInput; remove?: boolean }) => {
+      if (vars.remove && vars.id) return api.delete(`/projects/${projectId}/work-logs/${vars.id}`);
+      if (vars.id) return (await api.patch<{ workLog: WorkLog }>(`/projects/${projectId}/work-logs/${vars.id}`, vars.input)).workLog;
+      return (await api.post<{ workLog: WorkLog }>(`/projects/${projectId}/work-logs`, vars.input)).workLog;
+    },
+    onSuccess: () => Promise.all([qc.invalidateQueries({ queryKey: keys.workLogs(projectId) }), qc.invalidateQueries({ queryKey: ['activity', projectId] })]),
   });
 }
 

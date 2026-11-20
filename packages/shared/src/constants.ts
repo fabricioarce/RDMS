@@ -160,7 +160,7 @@ export const ACTIVITY_ACTIONS = [
 ] as const;
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
 
-export const ENTITY_TYPES = ['project', 'system', 'component', 'milestone', 'purchase', 'inspection', 'test'] as const;
+export const ENTITY_TYPES = ['project', 'system', 'component', 'milestone', 'purchase', 'inspection', 'test', 'work_log'] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
 
 /** Human-readable labels for component fields (used by the activity feed). */
@@ -216,6 +216,12 @@ export const COMPONENT_FIELD_LABELS: Record<string, string> = {
   actualDate: 'fecha real',
   needsWorkshop: 'necesita taller',
   needsExternal: 'necesita proveedor externo',
+  // work logs
+  componentId: 'componente',
+  minutes: 'tiempo trabajado',
+  subject: 'documento o tarea',
+  progress: 'avance',
+  pending: 'pendiente',
 };
 
 /** Estimated cost categories of a component (order matters for display). */
